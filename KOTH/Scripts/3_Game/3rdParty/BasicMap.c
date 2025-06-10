@@ -1,4 +1,4 @@
-# ifdef BASICMAP
+#ifdef BASICMAP
 modded class BasicMapController extends Managed {
     override void Init() {
         if (IsInit) SetMarkers("KOTH", new array < autoptr BasicMapMarker > );
@@ -6,4 +6,4 @@ modded class BasicMapController extends Managed {
         super.Init();
     }
 }
-# endif
+#endif
