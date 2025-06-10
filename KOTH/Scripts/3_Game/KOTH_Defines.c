@@ -1,0 +1,8 @@
+enum eKOTH
+{
+    LOG_CRITICAL = 1,
+    LOG_BASIC,
+    LOG_VERBOSE,
+
+    RPC_KOTH_CONFIG_SYNC = 1000
+};
