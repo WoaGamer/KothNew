@@ -13,9 +13,9 @@ modded class MissionServer extends MissionBase {
 
         KOTH_Settings.SyncDataSend(player);
 
-        # ifdef BASICMAP
+        #ifdef BASICMAP
         if (KOTH_Settings.IsUseMapMarker() && GetKOTHManager()) GetKOTHManager().UpdateBasicMapMarkers(identity);
-        # endif
+        #endif
     }
 
     override void OnInit() {
