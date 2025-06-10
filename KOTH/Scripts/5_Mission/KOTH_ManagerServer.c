@@ -31,7 +31,7 @@ class KOTH_ManagerServer {
         }
 
         for (int i = 0; i < m_ActiveEvents.Count(); i++) {
-            if (m_ActiveEvents[i].!IsActive()) {
+            if (!m_ActiveEvents[i].IsActive()) {
                 # ifdef BASICMAP
                 if (m_BasicMapMarkers) {
                     if (m_BasicMapMarkers.Find(m_ActiveEvents[i].GetBasicMapMarker()) > -1) m_BasicMapMarkers.RemoveItem(m_ActiveEvents[i].GetBasicMapMarker());
@@ -44,8 +44,8 @@ class KOTH_ManagerServer {
                 if (m_ActiveEvents[i].GetAdvancedGroupsMapMarker()) {
                     # ifdef LBmaster_Rework
                     LBStaticMarkerManager.Get.RemoveServerMarker(m_ActiveEvents[i].GetAdvancedGroupsMapMarker());
-                    #
-                    else LBStaticMarkerManager.Get().RemoveServerMarker(m_ActiveEvents[i].GetAdvancedGroupsMapMarker());
+                    # else
+                    LBStaticMarkerManager.Get().RemoveServerMarker(m_ActiveEvents[i].GetAdvancedGroupsMapMarker());
                     # endif
                 }
                 # endif
