@@ -12,7 +12,7 @@ class KOTH_CaptureProgressUI
 
     void KOTH_CaptureProgressUI()
     {
-        Workspace workspace = GetGame().GetWorkspace();
+        UIWorkspace workspace = GetGame().GetWorkspace();
         if (!workspace)
         {
             Print("[KOTH] Workspace not ready, capture UI will not be created.");
