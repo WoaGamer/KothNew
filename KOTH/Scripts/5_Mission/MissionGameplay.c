@@ -5,17 +5,19 @@ modded class MissionGameplay extends MissionBase
     override void OnInit()
     {
         super.OnInit();
-        m_KOTHCaptureUI = new KOTH_CaptureProgressUI();
     }
 
-    #ifdef BASICMAP
     override void OnMissionStart()
     {
         super.OnMissionStart();
+        m_KOTHCaptureUI = new KOTH_CaptureProgressUI();
+#ifdef BASICMAP
         Print("Requesting group update for KOTH.");
         BasicMap().RequestGroupUpdate("KOTH");
+#endif
     }
-    #endif
+
+    
 
     override void OnUpdate(float timeslice)
     {
