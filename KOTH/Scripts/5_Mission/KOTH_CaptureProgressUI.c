@@ -12,10 +12,25 @@ class KOTH_CaptureProgressUI
 
     void KOTH_CaptureProgressUI()
     {
-        m_Root = GetGame().GetWorkspace().CreateWidgets("KOTH/GUI/layouts/koth_capture_bar.layout");
+        Workspace workspace = GetGame().GetWorkspace();
+        if (!workspace)
+        {
+            Print("[KOTH] Workspace not ready, capture UI will not be created.");
+            return;
+        }
+
+        m_Root = workspace.CreateWidgets("KOTH/GUI/layouts/koth_capture_bar.layout");
+
+        if (!m_Root)
+        {
+            Print("[KOTH] Failed to create capture progress UI, layout missing.");
+            return;
+        }
+
         m_Background = ImageWidget.Cast(m_Root.FindAnyWidget("Background"));
         m_Bar = ImageWidget.Cast(m_Root.FindAnyWidget("Bar"));
         m_Text = TextWidget.Cast(m_Root.FindAnyWidget("ProgressText"));
+
         m_Root.Show(false);
         m_IsVisible = false;
     }
