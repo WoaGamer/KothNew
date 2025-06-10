@@ -13,7 +13,9 @@ class KOTH_CaptureProgressUI
 
     void KOTH_CaptureProgressUI()
     {
-        GetGame().GetCallQueue(CALL_CATEGORY_GUI).Call(this, "Init");
+        // Schedule initialization on the GUI call queue. Using CallLater
+        // ensures the Init method is invoked correctly for this instance.
+        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this, "Init", 0, false);
         m_IsVisible = false;
         m_Initialized = false;
     }
