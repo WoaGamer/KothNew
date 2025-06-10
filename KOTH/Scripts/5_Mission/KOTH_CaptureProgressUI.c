@@ -5,12 +5,20 @@ class KOTH_CaptureProgressUI
     protected ImageWidget m_Bar;
     protected TextWidget m_Text;
     protected bool m_IsVisible;
+    protected bool m_Initialized;
 
     protected vector m_ZonePos;
     protected float m_ZoneRadius;
     protected float m_Progress;
 
     void KOTH_CaptureProgressUI()
+    {
+        GetGame().GetCallQueue(CALL_CATEGORY_GUI).Call(this, "Init");
+        m_IsVisible = false;
+        m_Initialized = false;
+    }
+
+    void Init()
     {
         WorkspaceWidget workspace = GetGame().GetWorkspace();
         if (!workspace)
@@ -33,10 +41,14 @@ class KOTH_CaptureProgressUI
 
         m_Root.Show(false);
         m_IsVisible = false;
+        m_Initialized = true;
     }
 
     void Start(vector pos, float radius)
     {
+        if (!m_Initialized)
+            return;
+
         m_ZonePos = pos;
         m_ZoneRadius = radius;
         m_Progress = 0;
@@ -45,17 +57,25 @@ class KOTH_CaptureProgressUI
 
     void Stop()
     {
+        if (!m_Initialized)
+            return;
         Hide();
     }
 
     void SetProgress(float progress)
     {
+        if (!m_Initialized)
+            return;
+
         m_Progress = Math.Clamp(progress, 0, 100);
         UpdateUI();
     }
 
     void Update()
     {
+        if (!m_Initialized)
+            return;
+
         PlayerBase player = PlayerBase.Cast(GetGame().GetPlayer());
         if (!player) return;
 
@@ -72,6 +92,7 @@ class KOTH_CaptureProgressUI
 
     protected void UpdateUI()
     {
+        if (!m_Initialized) return;
         if (!m_IsVisible) return;
 
         m_Text.SetText(string.Format("%1%%", Math.Round(m_Progress)));
@@ -84,6 +105,9 @@ class KOTH_CaptureProgressUI
 
     protected void Show()
     {
+        if (!m_Initialized)
+            return;
+
         if (!m_IsVisible)
         {
             m_Root.Show(true);
@@ -93,6 +117,9 @@ class KOTH_CaptureProgressUI
 
     protected void Hide()
     {
+        if (!m_Initialized)
+            return;
+
         if (m_IsVisible)
         {
             m_Root.Show(false);
