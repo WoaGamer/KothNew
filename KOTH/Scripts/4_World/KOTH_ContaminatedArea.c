@@ -12,7 +12,11 @@ class KOTH_ContaminatedArea extends ContaminatedArea_Dynamic {
             m_OffsetPos = areaPos;
             m_OffsetPos[1] = m_OffsetPos[1] + AIRBORNE_FX_OFFSET;
 
-            array < vector > artilleryPoints = GetGame().GetMission().GetWorldData().GetArtyFiringPos();
+            Mission mission = GetGame().GetMission();
+            if (!mission || !mission.GetWorldData())
+                return;
+
+            array<vector> artilleryPoints = mission.GetWorldData().GetArtyFiringPos();
             vector closestPoint = areaPos;
             int dist = 0;
             int temp;
@@ -56,7 +60,7 @@ class KOTH_ContaminatedArea extends ContaminatedArea_Dynamic {
 
         m_Lifetime--;
         if (m_Lifetime <= 0) {
-            m_Timer.Stop();
+            if (m_Timer) m_Timer.Stop();
             Delete();
         }
 

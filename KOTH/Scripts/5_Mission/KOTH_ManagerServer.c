@@ -30,7 +30,7 @@ class KOTH_ManagerServer {
             return;
         }
 
-        for (int i = 0; i < m_ActiveEvents.Count(); i++) {
+        for (int i = m_ActiveEvents.Count() - 1; i >= 0; i--) {
             if (!m_ActiveEvents[i].IsActive()) {
                 #ifdef BASICMAP
                 if (m_BasicMapMarkers) {
