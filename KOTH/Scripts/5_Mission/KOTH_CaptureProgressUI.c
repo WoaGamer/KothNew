@@ -13,11 +13,10 @@ class KOTH_CaptureProgressUI
 
     void KOTH_CaptureProgressUI()
     {
-        // Schedule initialization on the GUI call queue. Using CallLater
-        // ensures the Init method is invoked correctly for this instance.
-        // Pass a bound method reference instead of object + string to avoid
-        // type-mismatch errors when scheduling with CallLater.
-        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 0, false);
+        // Schedule initialization on the GUI call queue. Providing the object
+        // reference ensures the method executes on this instance even if the
+        // call is processed after construction.
+        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(Init, 0, false, this);
         m_IsVisible = false;
         m_Initialized = false;
     }
