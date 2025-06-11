@@ -15,7 +15,9 @@ class KOTH_CaptureProgressUI
     {
         // Schedule initialization on the GUI call queue. Using CallLater
         // ensures the Init method is invoked correctly for this instance.
-        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this, "Init", 0, false);
+        // Pass a bound method reference instead of object + string to avoid
+        // type-mismatch errors when scheduling with CallLater.
+        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 0, false);
         m_IsVisible = false;
         m_Initialized = false;
     }
