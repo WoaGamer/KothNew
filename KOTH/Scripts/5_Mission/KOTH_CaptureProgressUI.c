@@ -30,7 +30,14 @@ class KOTH_CaptureProgressUI
         if (m_Initialized)
             return;
 
-        WorkspaceWidget workspace = GetGame().GetWorkspace();
+        DayZGame game = DayZGame.Cast(GetGame());
+        if (!game)
+        {
+            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
+            return;
+        }
+
+        WorkspaceWidget workspace = game.GetWorkspace();
         if (!workspace)
         {
             // Workspace might not be available yet during login. Try again
