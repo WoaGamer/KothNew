@@ -30,7 +30,7 @@ class KOTH_CaptureProgressUI
         if (m_Initialized)
             return;
 
-        WorkspaceWidget workspace = GetGame().GetWorkspace();
+        WorkspaceWidget workspace = game.GetWorkspace();
         if (!workspace)
         {
             // Workspace might not be available yet during login. Try again
