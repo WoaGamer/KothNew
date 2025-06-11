@@ -11,6 +11,8 @@ class KOTH_CaptureProgressUI
     protected float m_ZoneRadius;
     protected float m_Progress;
 
+    static const string LAYOUT_PATH = "KOTH/GUI/layouts/koth_capture_bar.layout";
+
     void KOTH_CaptureProgressUI()
     {
         // Schedule initialization on the GUI call queue. Providing the object
@@ -35,7 +37,14 @@ class KOTH_CaptureProgressUI
             return;
         }
 
-        WorkspaceWidget workspace = game.GetWorkspace();
+        UIManager uiManager = game.GetUIManager();
+        if (!uiManager)
+        {
+            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
+            return;
+        }
+
+        WorkspaceWidget workspace = uiManager.GetWorkspace();
         if (!workspace)
         {
             // Workspace might not be available yet during login. Try again
@@ -44,7 +53,13 @@ class KOTH_CaptureProgressUI
             return;
         }
 
-        m_Root = workspace.CreateWidgets("KOTH/GUI/layouts/koth_capture_bar.layout");
+        if (!FileExist(LAYOUT_PATH))
+        {
+            Print("[KOTH] " + LAYOUT_PATH + " missing. Retrying initialization...");
+            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
+            return;
+        }
+        m_Root = workspace.CreateWidgets(LAYOUT_PATH);
 
         if (!m_Root)
         {
