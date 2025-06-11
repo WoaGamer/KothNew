@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<widget type="PanelWidget" name="KothCaptureRoot" align="left bottom" pos="0 0" size="220 30">
-    <widget type="ImageWidget" name="Background" color="#808080" align="left bottom" pos="10 5" size="200 20"/>
-    <widget type="ImageWidget" name="Bar" color="#00ff00" align="left bottom" pos="10 5" size="0 20"/>
-    <widget type="TextWidget" name="ProgressText" align="center middle" pos="10 5" size="200 20" text="0%"/>
-</widget>
