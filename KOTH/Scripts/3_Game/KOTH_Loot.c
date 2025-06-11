@@ -17,11 +17,7 @@ class KOTH_Loot {
             m_Data.InitDefaults();
             SaveData();
         } else {
-            if (!JsonFileLoader<KOTH_LootData>.JsonLoadFile(m_Path, m_Data)) {
-                // fallback to defaults if json is corrupt
-                KOTH_Log.LogCritical("Failed to load loot config, using defaults.");
-                m_Data.InitDefaults();
-            }
+            JsonFileLoader<KOTH_LootData>.JsonLoadFile(m_Path, m_Data);
             SaveData(); // Update settings
         }
 

@@ -18,10 +18,7 @@ class KOTH_Settings {
             m_Data.InitDefaults(m_WorldName);
             SaveData();
         } else {
-            if (!JsonFileLoader<KOTH_SettingsData>.JsonLoadFile(cfgPath, m_Data)) {
-                KOTH_Log.LogCritical("Failed to load KOTH config, using defaults.");
-                m_Data.InitDefaults(m_WorldName);
-            }
+            JsonFileLoader<KOTH_SettingsData>.JsonLoadFile(cfgPath, m_Data);
             UpgradeData();
             SaveData(); // Update settings
         }
