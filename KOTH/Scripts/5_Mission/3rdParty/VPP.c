@@ -1,4 +1,4 @@
-# ifdef VanillaPPMap
+#ifdef VanillaPPMap
 modded class MissionServer extends MissionBase {
     void AddKOTHMarkerVPP(MarkerInfo newMarker) {
         m_ServerMarkersCache.AddKOTHMarker(newMarker);
@@ -15,4 +15,4 @@ modded class MissionServer extends MissionBase {
         }
     }
 }
-# endif
+#endif
