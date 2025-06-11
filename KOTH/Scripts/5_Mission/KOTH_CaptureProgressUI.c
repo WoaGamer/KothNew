@@ -37,14 +37,7 @@ class KOTH_CaptureProgressUI
             return;
         }
 
-        UIManager uiManager = game.GetUIManager();
-        if (!uiManager)
-        {
-            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
-            return;
-        }
-
-        WorkspaceWidget workspace = uiManager.GetWorkspace();
+        WorkspaceWidget workspace = game.GetWorkspace();
         if (!workspace)
         {
             // Workspace might not be available yet during login. Try again
