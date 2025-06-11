@@ -1,6 +1,5 @@
 modded class MissionGameplay extends MissionBase {
     protected ref KOTH_ProgressBar m_KOTHBar;
-    protected ref Timer m_KOTHTimer;
 
     override void OnMissionStart() {
         super.OnMissionStart();
@@ -9,8 +8,7 @@ modded class MissionGameplay extends MissionBase {
         BasicMap().RequestGroupUpdate("KOTH");
 #endif
         m_KOTHBar = new KOTH_ProgressBar();
-        m_KOTHTimer = new Timer();
-        m_KOTHTimer.Run(1, this, "KOTH_UpdateProgress", NULL, true);
+        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(KOTH_UpdateProgress, 1000, true, this);
     }
 
     void KOTH_UpdateProgress() {
