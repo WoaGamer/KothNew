@@ -7,9 +7,9 @@ class KOTH_ManagerServer {
     protected ref Timer m_MainTimer;
     protected ref Timer m_EventTimer;
 
-    # ifdef BASICMAP
+    #ifdef BASICMAP
     ref array < ref BasicMapMarker > m_BasicMapMarkers;
-    # endif
+    #endif
 
     protected float m_TimeToNextEvent;
     protected float m_TimeSinceLastEvent;
@@ -32,31 +32,31 @@ class KOTH_ManagerServer {
 
         for (int i = 0; i < m_ActiveEvents.Count(); i++) {
             if (m_ActiveEvents[i].!IsActive()) {
-                # ifdef BASICMAP
+                #ifdef BASICMAP
                 if (m_BasicMapMarkers) {
                     if (m_BasicMapMarkers.Find(m_ActiveEvents[i].GetBasicMapMarker()) > -1) m_BasicMapMarkers.RemoveItem(m_ActiveEvents[i].GetBasicMapMarker());
 
                     UpdateBasicMapMarkers();
                 }
-                # endif
+                #endif
 
-                # ifdef LBGROUP_SYSTEM
+                #ifdef LBGROUP_SYSTEM
                 if (m_ActiveEvents[i].GetAdvancedGroupsMapMarker()) {
-                    # ifdef LBmaster_Rework
+                    #ifdef LBmaster_Rework
                     LBStaticMarkerManager.Get.RemoveServerMarker(m_ActiveEvents[i].GetAdvancedGroupsMapMarker());
                     #else
                     LBStaticMarkerManager.Get().RemoveServerMarker(m_ActiveEvents[i].GetAdvancedGroupsMapMarker());
-                    # endif
+                    #endif
                 }
-                # endif
+                #endif
 
-                # ifdef EXPANSIONMODNAVIGATION
+                #ifdef EXPANSIONMODNAVIGATION
                 m_ActiveEvents[i].RemoveExpansionServerMarker();
-                # endif
+                #endif
 
-                # ifdef VanillaPPMap
+                #ifdef VanillaPPMap
                 m_ActiveEvents[i].RemoveVPPMapMarker();
-                # endif
+                #endif
 
                 m_ActiveEvents.Remove(i);
             }
@@ -112,9 +112,9 @@ class KOTH_ManagerServer {
             m_Players = new array < Man > ;
 
             if (KOTH_Settings.IsUseMapMarker()) {
-                # ifdef BASICMAP
+                #ifdef BASICMAP
                 m_BasicMapMarkers = new array < ref BasicMapMarker > ;
-                # endif
+                #endif
             }
 
             if (KOTH_Settings.GetTimeSpawn() > 0) {
@@ -177,24 +177,24 @@ class KOTH_ManagerServer {
         SendKOTHNotification(notificationMessage);
 
         if (KOTH_Settings.IsUseMapMarker()) {
-            # ifdef BASICMAP
+            #ifdef BASICMAP
             if (m_BasicMapMarkers) {
                 m_BasicMapMarkers.Insert(kothEvent.CreateBasicMapMarker());
                 UpdateBasicMapMarkers();
             }
-            # endif
+            #endif
 
-            # ifdef LBGROUP_SYSTEM_NEW
+            #ifdef LBGROUP_SYSTEM_NEW
             kothEvent.CreateAdvancedGroupsMapMarker();
-            # endif
+            #endif
 
-            # ifdef EXPANSIONMODNAVIGATION
+            #ifdef EXPANSIONMODNAVIGATION
             kothEvent.CreateExpansionServerMarker();
-            # endif
+            #endif
 
-            # ifdef VanillaPPMap
+            #ifdef VanillaPPMap
             kothEvent.CreateVPPMapMarker();
-            # endif
+            #endif
         }
 
         if (!m_EventTimer.IsRunning()) m_EventTimer.Run(1, this, "UpdateEvents", NULL, true);
@@ -277,8 +277,8 @@ class KOTH_ManagerServer {
     }
 
     void UpdateBasicMapMarkers(PlayerIdentity target = NULL) {
-        # ifdef BASICMAP
+        #ifdef BASICMAP
         if (m_BasicMapMarkers) BasicMap().SetMarkersRemote("KOTH", m_BasicMapMarkers, target);
-        # endif
+        #endif
     }
 }
