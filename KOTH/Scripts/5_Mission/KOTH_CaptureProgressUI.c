@@ -23,10 +23,15 @@ class KOTH_CaptureProgressUI
 
     void Init()
     {
+        if (m_Initialized)
+            return;
+
         WorkspaceWidget workspace = GetGame().GetWorkspace();
         if (!workspace)
         {
-            Print("[KOTH] Workspace not ready, capture UI will not be created.");
+            // Workspace might not be available yet during login. Try again
+            // shortly to avoid a crash when creating widgets too early.
+            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(Init, 100, false, this);
             return;
         }
 
