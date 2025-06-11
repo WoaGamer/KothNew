@@ -1,4 +1,4 @@
-# ifdef VanillaPPMap
+#ifdef VanillaPPMap
 modded class ServerMarkersCache extends JsonCacheManager < VPPMapConfig > {
     protected ref array < ref MarkerInfo > m_VPPKOTHMarkers = new array < ref MarkerInfo > ;
 
@@ -50,4 +50,4 @@ modded class DayZGame {
         Display3dMarkers();
     }
 }
-# endif
+#endif
