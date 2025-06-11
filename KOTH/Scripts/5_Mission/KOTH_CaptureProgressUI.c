@@ -16,7 +16,7 @@ class KOTH_CaptureProgressUI
         // Schedule initialization on the GUI call queue. Providing the object
         // reference ensures the method executes on this instance even if the
         // call is processed after construction.
-        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(Init, 0, false, this);
+        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 0, false);
         m_IsVisible = false;
         m_Initialized = false;
     }
@@ -31,7 +31,7 @@ class KOTH_CaptureProgressUI
         {
             // Workspace might not be available yet during login. Try again
             // shortly to avoid a crash when creating widgets too early.
-            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(Init, 100, false, this);
+            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
             return;
         }
 
