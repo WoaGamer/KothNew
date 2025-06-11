@@ -28,7 +28,14 @@ class KOTH_CaptureProgressUI
         if (m_Initialized)
             return;
 
-        WorkspaceWidget workspace = GetGame().GetWorkspace();
+        DayZGame game = DayZGame.Cast(GetGame());
+        if (!game)
+        {
+            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
+            return;
+        }
+
+        WorkspaceWidget workspace = game.GetWorkspace();
         if (!workspace)
         {
             // Workspace might not be available yet during login. Try again
@@ -51,6 +58,19 @@ class KOTH_CaptureProgressUI
         m_Background = ImageWidget.Cast(m_Root.FindAnyWidget("Background"));
         m_Bar = ImageWidget.Cast(m_Root.FindAnyWidget("Bar"));
         m_Text = TextWidget.Cast(m_Root.FindAnyWidget("ProgressText"));
+
+        if (!m_Background || !m_Bar || !m_Text)
+        {
+            Print("[KOTH] Capture progress UI widgets missing. Retrying initialization...");
+            if (m_Root)
+            {
+                m_Root.Show(false);
+                m_Root.Unlink();
+            }
+            m_Root = null;
+            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
+            return;
+        }
 
         m_Root.Show(false);
         m_IsVisible = false;
@@ -107,6 +127,7 @@ class KOTH_CaptureProgressUI
     {
         if (!m_Initialized) return;
         if (!m_IsVisible) return;
+        if (!m_Background || !m_Bar || !m_Text) return;
 
         m_Text.SetText(string.Format("%1%%", Math.Round(m_Progress)));
 
@@ -123,8 +144,11 @@ class KOTH_CaptureProgressUI
 
         if (!m_IsVisible)
         {
-            m_Root.Show(true);
-            m_IsVisible = true;
+            if (m_Root)
+            {
+                m_Root.Show(true);
+                m_IsVisible = true;
+            }
         }
     }
 
@@ -135,7 +159,8 @@ class KOTH_CaptureProgressUI
 
         if (m_IsVisible)
         {
-            m_Root.Show(false);
+            if (m_Root)
+                m_Root.Show(false);
             m_IsVisible = false;
         }
     }
