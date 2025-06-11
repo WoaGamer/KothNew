@@ -1,62 +1,67 @@
 // Capture progress HUD for KOTH mode.
-// Initialization logic includes retry mechanism when workspace or layout is unavailable.
 class KOTH_CaptureProgressUI
 {
+    static const string LAYOUT_PATH = "KOTH/GUI/layouts/koth_capture_bar.layout";
+    static const int RETRY_DELAY_MS = 100;
+
     protected Widget m_Root;
     protected ImageWidget m_Background;
     protected ImageWidget m_Bar;
     protected TextWidget m_Text;
-    protected bool m_IsVisible;
-    protected bool m_Initialized;
 
     protected vector m_ZonePos;
     protected float m_ZoneRadius;
     protected float m_Progress;
 
-    static const string LAYOUT_PATH = "KOTH/GUI/layouts/koth_capture_bar.layout";
+    protected bool m_Initialized;
+    protected bool m_Visible;
 
     void KOTH_CaptureProgressUI()
     {
-        // Schedule initialization on the GUI call queue. Providing the object
-        // reference ensures the method executes on this instance even if the
-        // call is processed after construction. Delay slightly to make sure
-        // the game UI has been fully created before we attempt to spawn
-        // our widgets.
-        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 1000, false);
-        m_IsVisible = false;
         m_Initialized = false;
+        m_Visible = false;
+        QueueInit();
     }
 
-    void Init()
+    protected void QueueInit()
+    {
+        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, RETRY_DELAY_MS, false);
+    }
+
+    protected void Init()
     {
         if (m_Initialized)
             return;
 
-        // Use the global GetGame() accessor to retrieve the workspace rather
-        // than referencing a non-existent "game" variable.
-        WorkspaceWidget workspace = GetGame().GetWorkspace();
+        if (GetGame().IsDedicatedServer())
+            return; // no UI on dedicated servers
+
+        DayZGame game = DayZGame.Cast(GetGame());
+        if (!game)
+        {
+            QueueInit();
+            return;
+        }
+
+        WorkspaceWidget workspace = game.GetWorkspace();
         if (!workspace)
         {
-            // Workspace might not be available yet during login. Try again
-            // shortly to avoid a crash when creating widgets too early.
-            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
+            QueueInit();
             return;
         }
 
         if (!FileExist(LAYOUT_PATH))
         {
-            Print("[KOTH] " + LAYOUT_PATH + " missing. Retrying initialization...");
-            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
+            Print("[KOTH] Layout " + LAYOUT_PATH + " not found, retrying...");
+            QueueInit();
             return;
         }
-        m_Root = workspace.CreateWidgets(LAYOUT_PATH);
 
+        m_Root = workspace.CreateWidgets(LAYOUT_PATH);
         if (!m_Root)
         {
-            // If the widget failed to create, the UI may still be initializing.
-            // Retry shortly instead of letting the game crash on a null pointer.
-            Print("[KOTH] Failed to create capture progress UI, layout missing or workspace not ready. Retrying...");
-            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
+            Print("[KOTH] Failed to create capture progress UI, retrying...");
+            QueueInit();
             return;
         }
 
@@ -66,20 +71,21 @@ class KOTH_CaptureProgressUI
 
         if (!m_Background || !m_Bar || !m_Text)
         {
-            Print("[KOTH] Capture progress UI widgets missing. Retrying initialization...");
-            if (m_Root)
-            {
-                m_Root.Show(false);
-                m_Root.Unlink();
-            }
+            Print("[KOTH] Capture progress UI widgets missing, retrying...");
+            m_Root.Unlink();
             m_Root = null;
-            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
+            QueueInit();
             return;
         }
 
         m_Root.Show(false);
-        m_IsVisible = false;
         m_Initialized = true;
+    }
+
+    void ~KOTH_CaptureProgressUI()
+    {
+        if (m_Root)
+            m_Root.Unlink();
     }
 
     void Start(vector pos, float radius)
@@ -115,7 +121,8 @@ class KOTH_CaptureProgressUI
             return;
 
         PlayerBase player = PlayerBase.Cast(GetGame().GetPlayer());
-        if (!player) return;
+        if (!player)
+            return;
 
         if (m_ZoneRadius > 0 && vector.Distance(player.GetPosition(), m_ZonePos) <= m_ZoneRadius)
         {
@@ -130,43 +137,33 @@ class KOTH_CaptureProgressUI
 
     protected void UpdateUI()
     {
-        if (!m_Initialized) return;
-        if (!m_IsVisible) return;
-        if (!m_Background || !m_Bar || !m_Text) return;
-
-        m_Text.SetText(string.Format("%1%%", Math.Round(m_Progress)));
+        if (!m_Initialized || !m_Visible)
+            return;
 
         float width, height;
         m_Background.GetSize(width, height);
+
         float newWidth = width * (m_Progress / 100.0);
         m_Bar.SetSize(newWidth, height);
+
+        m_Text.SetText(string.Format("%1%%", Math.Round(m_Progress)));
     }
 
     protected void Show()
     {
-        if (!m_Initialized)
+        if (!m_Initialized || m_Visible || !m_Root)
             return;
 
-        if (!m_IsVisible)
-        {
-            if (m_Root)
-            {
-                m_Root.Show(true);
-                m_IsVisible = true;
-            }
-        }
+        m_Root.Show(true);
+        m_Visible = true;
     }
 
     protected void Hide()
     {
-        if (!m_Initialized)
+        if (!m_Initialized || !m_Visible || !m_Root)
             return;
 
-        if (m_IsVisible)
-        {
-            if (m_Root)
-                m_Root.Show(false);
-            m_IsVisible = false;
-        }
+        m_Root.Show(false);
+        m_Visible = false;
     }
 }
