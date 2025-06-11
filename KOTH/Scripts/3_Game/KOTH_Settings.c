@@ -8,14 +8,20 @@ class KOTH_Settings {
     static bool LoadData() {
         GetGame().GetWorldName(m_WorldName);
 
-        if (!FileExist(m_Directory)) MakeDirectory(m_Directory);
+        if (!FileExist(m_Directory))
+            MakeDirectory(m_Directory);
 
-        if (!FileExist(string.Format(m_Path, m_WorldName))) {
+        string cfgPath = string.Format(m_Path, m_WorldName);
+
+        if (!FileExist(cfgPath)) {
             KOTH_Log.LogVerbose("Writing default config.");
             m_Data.InitDefaults(m_WorldName);
             SaveData();
         } else {
-            JsonFileLoader < KOTH_SettingsData > .JsonLoadFile(string.Format(m_Path, m_WorldName), m_Data);
+            if (!JsonFileLoader<KOTH_SettingsData>.JsonLoadFile(cfgPath, m_Data)) {
+                KOTH_Log.LogCritical("Failed to load KOTH config, using defaults.");
+                m_Data.InitDefaults(m_WorldName);
+            }
             UpgradeData();
             SaveData(); // Update settings
         }
@@ -48,7 +54,17 @@ class KOTH_Settings {
     }
 
     static void SyncDataSend(notnull Man player) {
-        GetGame().RPCSingleParam(player, eKOTH.RPC_KOTH_CONFIG_SYNC, new Param1 < KOTH_SettingsData > (m_Data), true, player.GetIdentity());
+        if (!player)
+            return;
+
+        PlayerIdentity identity = player.GetIdentity();
+        if (!identity) {
+            // Retry later if identity not ready yet
+            GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(SyncDataSend, 1000, false, player);
+            return;
+        }
+
+        GetGame().RPCSingleParam(player, eKOTH.RPC_KOTH_CONFIG_SYNC, new Param1<KOTH_SettingsData>(m_Data), true, identity);
     }
 
     static void OnRPC(Man player, ParamsReadContext ctx) {

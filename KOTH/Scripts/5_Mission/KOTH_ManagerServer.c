@@ -131,6 +131,11 @@ class KOTH_ManagerServer {
     }
 
     protected void StartEvent() {
+        if (KOTH_Settings.GetZones().Count() == 0) {
+            KOTH_Log.LogCritical("No zones configured. Event will not start.");
+            return;
+        }
+
         bool zoneFound = false;
         int zoneAttempts = 0;
         KOTH_Zone kothZone;
@@ -138,6 +143,10 @@ class KOTH_ManagerServer {
         while (!zoneFound) {
             bool zoneConflict;
             kothZone = KOTH_Settings.GetZones().GetRandomElement();
+            if (!kothZone) {
+                KOTH_Log.LogCritical("Failed to acquire random zone.");
+                return;
+            }
             KOTH_Log.LogVerbose("Testing zone with name: " + kothZone.GetName());
 
             if (m_CooldownZones.Contains(kothZone.GetName())) zoneConflict = true;

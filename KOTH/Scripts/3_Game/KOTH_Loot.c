@@ -9,14 +9,19 @@ class KOTH_Loot {
     }
 
     static bool LoadData() {
-        if (!FileExist(m_Directory)) MakeDirectory(m_Directory);
+        if (!FileExist(m_Directory))
+            MakeDirectory(m_Directory);
 
         if (!FileExist(m_Path)) {
             KOTH_Log.LogVerbose("Writing default loot config.");
             m_Data.InitDefaults();
             SaveData();
         } else {
-            JsonFileLoader < KOTH_LootData > .JsonLoadFile(m_Path, m_Data);
+            if (!JsonFileLoader<KOTH_LootData>.JsonLoadFile(m_Path, m_Data)) {
+                // fallback to defaults if json is corrupt
+                KOTH_Log.LogCritical("Failed to load loot config, using defaults.");
+                m_Data.InitDefaults();
+            }
             SaveData(); // Update settings
         }
 

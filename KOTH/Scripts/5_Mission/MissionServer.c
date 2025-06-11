@@ -4,14 +4,16 @@ modded class MissionServer extends MissionBase {
     override PlayerBase OnClientNewEvent(PlayerIdentity identity, vector pos, ParamsReadContext ctx) {
         PlayerBase player = super.OnClientNewEvent(identity, pos, ctx);
 
-        KOTH_Settings.SyncDataSend(player);
+        if (player)
+            KOTH_Settings.SyncDataSend(player);
         return player;
     }
 
     override void OnClientReadyEvent(PlayerIdentity identity, PlayerBase player) {
         super.OnClientReadyEvent(identity, player);
 
-        KOTH_Settings.SyncDataSend(player);
+        if (identity && player)
+            KOTH_Settings.SyncDataSend(player);
 
         #ifdef BASICMAP
         if (KOTH_Settings.IsUseMapMarker() && GetKOTHManager()) GetKOTHManager().UpdateBasicMapMarkers(identity);
