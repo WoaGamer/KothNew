@@ -5,11 +5,18 @@ class KOTH_ProgressBar {
     protected bool m_Visible;
 
     void KOTH_ProgressBar() {
-        if (!GetGame()) return;
+        if (!GetGame())
+            return;
+
         m_Root = GetGame().GetWorkspace().CreateWidgets("KOTH/gui/layouts/koth_progress.layout");
-        m_Bar = ProgressBarWidget.Cast(m_Root.FindAnyWidget("ProgressBar"));
-        m_Text = TextWidget.Cast(m_Root.FindAnyWidget("ProgressText"));
-        Hide();
+
+        if (m_Root) {
+            m_Bar = ProgressBarWidget.Cast(m_Root.FindAnyWidget("ProgressBar"));
+            m_Text = TextWidget.Cast(m_Root.FindAnyWidget("ProgressText"));
+            Hide();
+        } else {
+            KOTH_Log.LogCritical("Failed to create KOTH progress bar layout.");
+        }
     }
 
     void Show() {
