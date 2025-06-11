@@ -44,8 +44,8 @@ class KOTH_ManagerServer {
                 if (m_ActiveEvents[i].GetAdvancedGroupsMapMarker()) {
                     # ifdef LBmaster_Rework
                     LBStaticMarkerManager.Get.RemoveServerMarker(m_ActiveEvents[i].GetAdvancedGroupsMapMarker());
-                    #
-                    else LBStaticMarkerManager.Get().RemoveServerMarker(m_ActiveEvents[i].GetAdvancedGroupsMapMarker());
+                    #else
+                    LBStaticMarkerManager.Get().RemoveServerMarker(m_ActiveEvents[i].GetAdvancedGroupsMapMarker());
                     # endif
                 }
                 # endif
