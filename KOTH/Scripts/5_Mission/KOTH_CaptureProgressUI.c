@@ -1,3 +1,5 @@
+// Capture progress HUD for KOTH mode.
+// Initialization logic includes retry mechanism when workspace or layout is unavailable.
 class KOTH_CaptureProgressUI
 {
     protected Widget m_Root;
