@@ -30,13 +30,6 @@ class KOTH_CaptureProgressUI
         if (m_Initialized)
             return;
 
-        DayZGame game = DayZGame.Cast(GetGame());
-        if (!game)
-        {
-            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
-            return;
-        }
-
         WorkspaceWidget workspace = game.GetWorkspace();
         if (!workspace)
         {
