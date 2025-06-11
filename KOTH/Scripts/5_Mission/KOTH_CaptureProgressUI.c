@@ -15,8 +15,10 @@ class KOTH_CaptureProgressUI
     {
         // Schedule initialization on the GUI call queue. Providing the object
         // reference ensures the method executes on this instance even if the
-        // call is processed after construction.
-        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 0, false);
+        // call is processed after construction. Delay slightly to make sure
+        // the game UI has been fully created before we attempt to spawn
+        // our widgets.
+        GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 1000, false);
         m_IsVisible = false;
         m_Initialized = false;
     }
@@ -39,7 +41,10 @@ class KOTH_CaptureProgressUI
 
         if (!m_Root)
         {
-            Print("[KOTH] Failed to create capture progress UI, layout missing.");
+            // If the widget failed to create, the UI may still be initializing.
+            // Retry shortly instead of letting the game crash on a null pointer.
+            Print("[KOTH] Failed to create capture progress UI, layout missing or workspace not ready. Retrying...");
+            GetGame().GetCallQueue(CALL_CATEGORY_GUI).CallLater(this.Init, 100, false);
             return;
         }
 
