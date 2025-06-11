@@ -30,7 +30,9 @@ class KOTH_CaptureProgressUI
         if (m_Initialized)
             return;
 
-        WorkspaceWidget workspace = game.GetWorkspace();
+        // Use the global GetGame() accessor to retrieve the workspace rather
+        // than referencing a non-existent "game" variable.
+        WorkspaceWidget workspace = GetGame().GetWorkspace();
         if (!workspace)
         {
             // Workspace might not be available yet during login. Try again
